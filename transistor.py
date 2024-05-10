@@ -4,10 +4,10 @@ import numpy as np
 class MosDevice():
     def __init__(self) -> None:
         self.model: str             = ""
-        self.gmoverid: np.float32   = 0.0
-        self.gmro: np.float32       = 0.0
-        self.id: np.float32         = 0.0
-        self.ft: np.float32         = 0.0
+        self.gmoverid: float        = 0.0
+        self.gmro: float            = 0.0
+        self.id: float              = 0.0
+        self.ft: float              = 0.0
         self.params: npt.NDArray[np.float32] = np.array([
             self.gmoverid, self.gmro, self.id, self.ft])
         
