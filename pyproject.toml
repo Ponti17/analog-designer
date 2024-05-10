@@ -1,0 +1,11 @@
+[project]
+name = "analog-designer"
+version = "0.0.1"
+authors =  [
+    {name = "Andreas Pedersen", email = "andreas@pedersenmail.com"}
+]
+description = "TBA"
+license = "MIT"
+
+[tool.mypy]
+strict = true
