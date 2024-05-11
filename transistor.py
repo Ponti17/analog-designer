@@ -8,8 +8,3 @@ class MosDevice():
         self.gmro: float            = 0.0
         self.id: float              = 0.0
         self.ft: float              = 0.0
-        self.params: npt.NDArray[np.float32] = np.array([
-            self.gmoverid, self.gmro, self.id, self.ft])
-        
-    def set(self, params: npt.NDArray[np.float32]) -> None:
-        self.params = params
