@@ -2,6 +2,7 @@
 
 # DON'T commit data related models from PDK
 *.pkl
+*.csv
 
 # Template
 
