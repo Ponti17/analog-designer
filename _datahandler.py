@@ -9,6 +9,8 @@ class DataHandler:
         self.model: str = ""
         
     def load(self, model: str) -> None:
+        if self.model == model:
+            return
         modeldir  =     "models"
         modellist =    {"nch":        "nch_full_sim",
                         "nch_25":     "nch_25_full_sim",
