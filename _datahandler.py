@@ -31,6 +31,8 @@ class DataHandler:
         return self.model
 
     def get_axis(self, ax: str, vdsrc: str, gateL: str) -> npt.NDArray[np.float64]:
+        vdsrc = str("{:.2e}".format(float(vdsrc)))
+        gateL = str("{:.2e}".format(float(gateL)))
         match ax:
             case "gmro":
                 return self.__get_gmro(vdsrc, gateL)
