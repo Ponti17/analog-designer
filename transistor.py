@@ -19,30 +19,30 @@ class MosDevice():
         
     def set_gmoverid(self, gmid: float) -> None:
         self.gmoverid = gmid
-        if self.__valid():
+        if self.valid():
             self.__calculate()
         
     def set_id(self, id: float) -> None:
         self.id = id
-        if self.__valid():
+        if self.valid():
             self.__calculate()
         
     def set_model(self, model: str) -> None:
         self.model = model
-        if self.__valid():
+        if self.valid():
             self.__calculate()
             
     def set_gateL(self, gateL: float) -> None:
         self.gateL = gateL
-        if self.__valid():
+        if self.valid():
             self.__calculate()
             
     def set_vdsrc(self, vdsrc: float) -> None:
         self.vdsrc = vdsrc
-        if self.__valid():
+        if self.valid():
             self.__calculate()
         
-    def __valid(self) -> bool:
+    def valid(self) -> bool:
         if self.model != "" and self.gmoverid != 0.0 and self.id != 0.0 and self.gateL != 0.0 and self.vdsrc != 0.0:
             return True
         return False
