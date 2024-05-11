@@ -64,3 +64,6 @@ class MosDevice():
     
     def ft(self) -> float:
         return self.ft_val
+    
+    def gm(self) -> float:
+        return self.gmro_val * self.id
