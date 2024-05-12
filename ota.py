@@ -8,7 +8,7 @@ class OTA:
         
         self.itail: float   = 0.0
         self.Av: float      = 0.0
-        self.Rout: float    = 0.0
+        self.rout: float    = 0.0
         
         # Output Pole
         self.fp1: float     = 0.0
@@ -30,5 +30,5 @@ class OTA:
         return R1 * R2 / (R1 + R2)
             
     def __calculate(self) -> None:
-        self.Rout = self.__parallel(self.M3.ro(), self.M7.ro())
-        self.Av = self.Rout * self.M1.gm()
+        self.rout = self.__parallel(self.M3.ro(), self.M7.ro())
+        self.Av = self.rout * self.M1.gm()
