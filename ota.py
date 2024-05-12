@@ -23,5 +23,9 @@ class OTA:
         if self.M1.valid() and self.M3.valid() and self.M7.valid():
             self.__calculate()
             
+    def __parallel(self, R1: float, R2: float) -> float:
+        return R1 * R2 / (R1 + R2)
+            
     def __calculate(self) -> None:
-        pass
+        self.Rout = self.__parallel(self.M3.ro(), self.M7.ro())
+        self.Av = self.Rout * self.M1.gm()
