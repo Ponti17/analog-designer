@@ -32,3 +32,6 @@ class OTA:
     def __calculate(self) -> None:
         self.rout = self.__parallel(self.M3.ro(), self.M7.ro())
         self.Av = self.rout * self.M1.gm()
+        
+    def av(self) -> float:
+        return self.Av
