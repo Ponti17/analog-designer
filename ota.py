@@ -1,4 +1,4 @@
-from transistor import MosDevice()
+from transistor import MosDevice
 
 class OTA:
     def __init__(self):
