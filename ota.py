@@ -7,7 +7,7 @@ class OTA:
         self.M7 = MosDevice()
         
         self.itail: float   = 0.0
-        self.Av: float      = 0.0
+        self.av_val: float      = 0.0
         self.rout: float    = 0.0
         
         # Output Pole
@@ -31,7 +31,7 @@ class OTA:
             
     def __calculate(self) -> None:
         self.rout = self.__parallel(self.M3.ro(), self.M7.ro())
-        self.Av = self.rout * self.M1.gm()
+        self.av_val = self.rout * self.M1.gm()
         
     def av(self) -> float:
-        return self.Av
+        return self.av_val
