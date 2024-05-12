@@ -6,7 +6,7 @@ class OTA:
         self.M3 = MosDevice()
         self.M7 = MosDevice()
         
-        self.id: float      = 0.0
+        self.itail: float   = 0.0
         self.Av: float      = 0.0
         self.Rout: float    = 0.0
         
@@ -20,6 +20,9 @@ class OTA:
         self.fp4: float     = 0.0
         
     def init(self) -> None:
+        self.M1.set_id(self.itail/2)
+        self.M3.set_id(self.itail/2)
+        self.M7.set_id(self.itail/2)
         if self.M1.valid() and self.M3.valid() and self.M7.valid():
             self.__calculate()
             
