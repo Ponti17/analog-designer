@@ -1,7 +1,7 @@
 from transistor import MosDevice
 
 class OTA:
-    def __init__(self):
+    def __init__(self) -> None:
         self.M1 = MosDevice()
         self.M3 = MosDevice()
         self.M7 = MosDevice()
