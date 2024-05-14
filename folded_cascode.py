@@ -29,17 +29,15 @@ class FoldedCascode:
         self.fp1: float     = 0.0
         # NMOS Mirror Pole
         self.fp2: float     = 0.0
-        # NMOS Mirror Pole
-        self.fp3: float     = 0.0
-        # PMOS Mirror Pole
-        self.fp4: float     = 0.0
+        # NMOS Mirror Zero
+        self.fz1: float     = 0.0
         
     def init(self) -> None:
         self.M0.set_id(self.itail/2)
         self.M1.set_id(self.itail/2)
-        self.M2.set_id(self.itail/2)
+        self.M2.set_id(self.itail)
         self.M3.set_id(self.itail/2)
-        self.M4.set_id(self.itail/2)
+        self.M4.set_id(self.itail)
         self.M5.set_id(self.itail/2)
 
         self.__calculate()
@@ -56,18 +54,24 @@ class FoldedCascode:
         nmos_ro = self.__cascode(self.M2.ro(), self.M3.ro(), self.M3.gm())
         pmos_ro = self.__cascode(self.M4.ro(), self.M5.ro(), self.M5.gm())
         self.rout_val = self.__parallel(nmos_ro, pmos_ro)
-        self.av_val = self.rout_val * self.GM_val
+        
+        nmos_mirror_cap = 2*(self.M2.gm() / (2*np.pi*self.M2.ft()))
         
         self.fp1 = 1 / (2 * np.pi * self.rout_val * self.CL)
+        self.fp2 = self.M2.gm() / (2 * np.pi * nmos_mirror_cap)
+        self.fz1 = 2 * self.M2.gm() / (2 * np.pi * nmos_mirror_cap)
         
     def av(self) -> float:
-        return self.av_val
+        return self.rout_val * self.GM_val
     
     def rout(self) -> float:
         return self.rout_val
     
     def poles(self) -> list[float]:
-        return [self.fp1]
+        return [self.fp1, self.fp2]
+    
+    def zeros(self) -> list[float]:
+        return [self.fz1]
 
     def GM(self) -> float:
         return self.GM_val
