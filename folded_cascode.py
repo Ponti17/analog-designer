@@ -1,6 +1,6 @@
-from transistor import MosDevice
 import numpy as np
 from utils import Utils
+from transistor import MosDevice
 
 # Full input-swing folded cascode
 # P. 390 Razavi
@@ -23,7 +23,6 @@ class FoldedCascode:
         
         self.itail: float       = 0.0
         self.GM_val: float      = 0.0
-        self.av_val: float      = 0.0
         self.rout_val: float    = 0.0
         self.CL: float          = 0.0
         
