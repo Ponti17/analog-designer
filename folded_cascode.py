@@ -1,11 +1,13 @@
 from transistor import MosDevice
 import numpy as np
+from utils import Utils
 
 # Full input-swing folded cascode
 # P. 390 Razavi
 
 class FoldedCascode:
     def __init__(self) -> None:
+        self.utils = Utils()
         # input NMOS
         self.M0 = MosDevice()
         # input PMOS
@@ -19,11 +21,11 @@ class FoldedCascode:
         # PMOS CCS Cascode
         self.M5 = MosDevice()
         
-        self.itail: float   = 0.0
+        self.itail: float       = 0.0
         self.GM_val: float      = 0.0
         self.av_val: float      = 0.0
         self.rout_val: float    = 0.0
-        self.CL: float      = 0.0
+        self.CL: float          = 0.0
         
         # Output Pole
         self.fp1: float     = 0.0
@@ -42,18 +44,12 @@ class FoldedCascode:
 
         self.__calculate()
             
-    def __parallel(self, R1: float, R2: float) -> float:
-        return R1 * R2 / (R1 + R2)
-    
-    def __cascode(self, rO1: float, rO2: float, gm2: float) -> float:
-        return (1 + gm2 * rO2) * rO1 + rO2
-            
     def __calculate(self) -> None:
         # Assume worst case GM
         self.GM_val = min(self.M0.gm(), self.M1.gm())
-        nmos_ro = self.__cascode(self.M2.ro(), self.M3.ro(), self.M3.gm())
-        pmos_ro = self.__cascode(self.M4.ro(), self.M5.ro(), self.M5.gm())
-        self.rout_val = self.__parallel(nmos_ro, pmos_ro)
+        nmos_ro = self.utils.cascode(self.M2.ro(), self.M3.ro(), self.M3.gm())
+        pmos_ro = self.utils.cascode(self.M4.ro(), self.M5.ro(), self.M5.gm())
+        self.rout_val = self.utils.parallel([nmos_ro, pmos_ro])
         
         nmos_mirror_cap = 2*(self.M2.gm() / (2*np.pi*self.M2.ft()))
         
