@@ -72,3 +72,6 @@ class MosDevice():
     
     def ro(self) -> float:
         return self.gmro() / self.gm()
+    
+    def cgg(self) -> float:
+        return self.gm() / self.ft() * (1 / (2 * np.pi))
