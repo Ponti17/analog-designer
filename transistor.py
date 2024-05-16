@@ -14,9 +14,12 @@ class MosDevice():
         self.gmro_val: float        = 0.0
         self.ft_val: float          = 0.0
         self.gmoverid_val: float    = 0.0
+        self.idw_val: float         = 0.0
+        self.w_val: float           = 0.0
         self.__gmoverid_arr: npt.NDArray[np.float64]
         self.__gmro_arr: npt.NDArray[np.float64]
         self.__ft_arr: npt.NDArray[np.float64]
+        self.__idww_arr: npt.NDArray[np.float64]
         
     def set_gmoverid(self, gmid: float) -> None:
         self.gmoverid = gmid
@@ -53,12 +56,15 @@ class MosDevice():
         self.__gmoverid_arr = self.__reader.get_axis("gmoverid", str(self.vdsrc), str(self.gateL))
         self.__gmro_arr = self.__reader.get_axis("gmro", str(self.vdsrc), str(self.gateL))
         self.__ft_arr = self.__reader.get_axis("ft", str(self.vdsrc), str(self.gateL))
+        self.__idw_arr = self.__reader.get_axis("id/w", str(self.vdsrc), str(self.gateL))
 
         for i in range(len(self.__gmoverid_arr)):
             if self.__gmoverid_arr[i] < self.gmoverid:
                 self.gmoverid_val = self.__gmoverid_arr[i]
                 self.gmro_val = self.__gmro_arr[i]
                 self.ft_val = self.__ft_arr[i]
+                self.idw_val = self.__idw_arr[i]
+                self.w_val = self.id / self.idw_val
                 break
     
     def gmro(self) -> float:
@@ -75,3 +81,6 @@ class MosDevice():
     
     def cgg(self) -> float:
         return self.gm() / self.ft() * (1 / (2 * np.pi))
+    
+    def width(self) -> float:
+        return self.w_val
