@@ -72,3 +72,11 @@ class OTA:
     
     def GM(self) -> float:
         return self.GM_val
+    
+    def size(self) -> dict[str, str]:
+        W0 = str("{:.2e}".format(float(self.M0.w_val)))
+        W1 = str("{:.2e}".format(float(self.M1.w_val)))
+        W2 = str("{:.2e}".format(float(self.M2.w_val)))
+        W3 = str("{:.2e}".format(float(self.M3.w_val)))
+        W4 = str("{:.2e}".format(float(self.M4.w_val)))
+        return {"W0": W0, "W1": W1, "W2": W2, "W3": W3, "W4": W4}
