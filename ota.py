@@ -55,9 +55,9 @@ class OTA:
         self.rout_val = self.utils.parallel([nmos_ro, pmos_ro])
         
         self.fp1 = 1 / (2 * np.pi * self.rout_val * self.CL)
-        self.fp2 = self.M1.gm() / (2 * np.pi * self.M1.cgg())
-        self.fp3 = self.M1.gm() / (2 * np.pi * self.M1.cgg())
-        self.fp4 = self.M3.gm() / (2 * np.pi * self.M3.cgg())
+        self.fp2 = self.M1.gm() / (4 * np.pi * self.M1.cgg())
+        self.fp3 = self.M1.gm() / (4 * np.pi * self.M1.cgg())
+        self.fp4 = self.M3.gm() / (4 * np.pi * self.M3.cgg())
         
         self.av_val = self.rout_val * self.M0.gm()
         
