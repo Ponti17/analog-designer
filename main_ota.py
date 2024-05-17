@@ -3,20 +3,21 @@ from ota import OTA
 
 if __name__ == "__main__":
     ota = OTA()
-    ota.itail = 2.24e-6 * 2
+    ota.itail = 2.8e-6
     ota.CL = 400e-15
+    ota.cl_gain = 20*np.log10(20)
     
     ota.M0.model = "pch_25"
-    ota.M1.model = "nch"
-    ota.M2.model = "nch"
-    ota.M3.model = "pch"
-    ota.M4.model = "pch_hvt"
+    ota.M1.model = "nch_25"
+    ota.M2.model = "nch_25"
+    ota.M3.model = "pch_25"
+    ota.M4.model = "pch_25"
     
     ota.M0.gateL = 1e-6
-    ota.M1.gateL = 2e-6
-    ota.M2.gateL = 17e-6
-    ota.M3.gateL = 2e-6
-    ota.M4.gateL = 2e-6
+    ota.M1.gateL = 8e-6
+    ota.M2.gateL = 3e-6
+    ota.M3.gateL = 10e-6
+    ota.M4.gateL = 1e-6
 
     ota.M0.vdsrc = 0.3
     ota.M1.vdsrc = 0.3
@@ -26,9 +27,9 @@ if __name__ == "__main__":
     
     ota.M0.gmoverid = 27
     ota.M1.gmoverid = 22
-    ota.M2.gmoverid = 16
-    ota.M3.gmoverid = 20
-    ota.M4.gmoverid = 18
+    ota.M2.gmoverid = 15
+    ota.M3.gmoverid = 17
+    ota.M4.gmoverid = 15
     
     ota.init()
     
@@ -41,3 +42,5 @@ if __name__ == "__main__":
     
     sizes = ota.size()
     print(sizes)
+    
+    ota.bode()
