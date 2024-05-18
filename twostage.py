@@ -68,6 +68,8 @@ class TwoStage:
         # 1st stage mirror pole
         self.fp3: float     = 0.0
         
+        self.cascode_mirror: bool = False
+        
     def init(self) -> None:
         self.M0.set_id(self.itail/2)
         self.M1.set_id(self.itail/2)
@@ -82,17 +84,18 @@ class TwoStage:
         self.gm_2nd = self.M3.gm()
         
         pmos_ro_1st     = self.M0.ro()
-        mirror_ro_1st   = self.utils.cascode(self.M1.ro(), self.M2.ro(), self.M2.gm())
+        if self.cascode_mirror:
+            mirror_ro_1st   = self.utils.cascode(self.M1.ro(), self.M2.ro(), self.M2.gm())
+        else:
+            mirror_ro_1st   = self.M1.ro()
         self.rout_1st   = self.utils.parallel([pmos_ro_1st, mirror_ro_1st])
         self.av_1st     = self.rout_1st * self.gm_1st
-        
-        pmos_ro_2nd     = self.M3.ro()
-        nmos_ro_2nd     = self.M4.ro()
-        self.rout_2nd   = self.utils.parallel([pmos_ro_2nd, nmos_ro_2nd])
+
+        self.rout_2nd   = self.utils.parallel([self.M3.ro(), self.M4.ro()])
         self.av_2nd     = self.rout_2nd * self.gm_2nd
         
         self.fp1 = (1 / (2 * np.pi * self.Cc * (1 + self.av_2nd) * self.rout_1st))
-        self.fp2 = (1 / (2 * np.pi * self.rout_2nd * self.CL))
+        self.fp2 = (self.M3.gm() / (2 * np.pi * self.CL))
         self.fp3 = (self.M1.gm() / (2 * np.pi * 2 * self.M1.cgs()))
         
     def av(self) -> float:
