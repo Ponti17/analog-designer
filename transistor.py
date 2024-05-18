@@ -60,10 +60,10 @@ class MosDevice():
 
         for i in range(len(self.__gmoverid_arr)):
             if self.__gmoverid_arr[i] < self.gmoverid:
-                self.gmoverid_val = self.__gmoverid_arr[i]
-                self.gmro_val = self.__gmro_arr[i]
-                self.ft_val = self.__ft_arr[i]
-                self.idw_val = self.__idw_arr[i]
+                self.gmoverid_val = self.__gmoverid_arr[i].item()
+                self.gmro_val = self.__gmro_arr[i].item()
+                self.ft_val = self.__ft_arr[i].item()
+                self.idw_val = self.__idw_arr[i].item()
                 self.w_val = self.id / self.idw_val
                 break
     

@@ -59,10 +59,10 @@ class OTA:
         pmos_ro = self.utils.cascode(self.M3.ro(), self.M4.ro(), self.M4.gm())
         self.rout_val = self.utils.parallel([nmos_ro, pmos_ro])
         
-        self.fp1 = (1 / (2 * np.pi * self.rout_val * self.CL)).item()
-        self.fp2 = (self.M1.gm() / (4 * np.pi * self.M1.cgs())).item()
-        self.fp3 = (self.M1.gm() / (4 * np.pi * self.M1.cgs())).item()
-        self.fp4 = (self.M3.gm() / (4 * np.pi * self.M3.cgs())).item()
+        self.fp1 = (1 / (2 * np.pi * self.rout_val * self.CL))
+        self.fp2 = (self.M1.gm() / (4 * np.pi * self.M1.cgs()))
+        self.fp3 = (self.M1.gm() / (4 * np.pi * self.M1.cgs()))
+        self.fp4 = (self.M3.gm() / (4 * np.pi * self.M3.cgs()))
         
         self.av_val = self.rout_val * self.M0.gm()
         
