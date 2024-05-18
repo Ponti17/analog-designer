@@ -6,6 +6,7 @@ if __name__ == "__main__":
     ts.itail    = 2.8e-6
     ts.iout     = 2.8e-6
     ts.CL       = 400e-15
+    ts.Cc     = 100e-15
     ts.cl_gain  = 20*np.log10(20)
     
     ts.M0.model = "pch_25"
@@ -44,4 +45,4 @@ if __name__ == "__main__":
     sizes = ts.size()
     print(sizes)
     
-    # ts.bode()
+    ts.bode()

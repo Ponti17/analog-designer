@@ -4,11 +4,10 @@ import matplotlib.pyplot as plt
 from utils import Utils
 from transistor import MosDevice
 
-# Three-mirror OTA
-# "A Low-Power, Low-Noise CMOS Amplifier for Neural Recording Applications"
-# Reid R. Harrison
+# Two Stage Amplifier
+# Kenneth Martin p. 243
 
-class OTA:
+class TwoStage:
     def __init__(self) -> None:
         self.utils = Utils()
         
@@ -21,63 +20,89 @@ class OTA:
         # NMOS Mirror
         self.M1 = MosDevice()
         
-        # NMOS Cascode
+        # NMOS Mirror Cascode
         self.M2 = MosDevice()
         
-        # PMOS Mirror
+        # NMOS 2nd stage
         self.M3 = MosDevice()
         
-        # PMOS Cascode
+        # PMOS 2nd stage load
         self.M4 = MosDevice()
         
+        # Miller capacitor
+        self.Cc:float           = 0.0
+        
+        # Output stage currnet
         self.iout: float        = 0.0
+        
+        # Input pair tail current
         self.itail: float       = 0.0
-        self.GM_val: float      = 0.0
-        self.rout_val: float    = 0.0
+        
+        # 1st stage gm
+        self.gm_1st: float      = 0.0
+        
+        # 1st stage output resistance
+        self.rout_1st: float    = 0.0
+        
+        # 2nd stage gm
+        self.gm_2nd: float      = 0.0
+        
+        # 2nd stage output resistance
+        self.rout_2nd: float    = 0.0
+        
+        # 1st stage gain
+        self.av_1st: float      = 0.0
+        
+        # 2nd stage gain
+        self.av_2nd: float      = 0.0
+        
+        # 2nd stage load capacitor
         self.CL: float          = 0.0
         
-        # Output Pole
+        # Dominant miller pole
         self.fp1: float     = 0.0
-        # NMOS Mirror Pole
+        
+        # Output pole
         self.fp2: float     = 0.0
-        # NMOS Mirror Pole
+        
+        # 1st stage mirror pole
         self.fp3: float     = 0.0
-        # PMOS Mirror Pole
-        self.fp4: float     = 0.0
         
     def init(self) -> None:
         self.M0.set_id(self.itail/2)
         self.M1.set_id(self.itail/2)
         self.M2.set_id(self.itail/2)
-        self.M3.set_id(self.itail/2)
-        self.M4.set_id(self.itail/2)
+        self.M3.set_id(self.iout)
+        self.M4.set_id(self.iout)
         
         self.__calculate()
             
     def __calculate(self) -> None:
-        self.GM_val = self.M0.gm()
-        nmos_ro = self.utils.cascode(self.M1.ro(), self.M2.ro(), self.M2.gm())
-        pmos_ro = self.utils.cascode(self.M3.ro(), self.M4.ro(), self.M4.gm())
-        self.rout_val = self.utils.parallel([nmos_ro, pmos_ro])
+        self.gm_1st = self.M0.gm()
+        self.gm_2nd = self.M3.gm()
         
-        self.fp1 = (1 / (2 * np.pi * self.rout_val * self.CL)).item()
-        self.fp2 = (self.M1.gm() / (4 * np.pi * self.M1.cgs())).item()
-        self.fp3 = (self.M1.gm() / (4 * np.pi * self.M1.cgs())).item()
-        self.fp4 = (self.M3.gm() / (4 * np.pi * self.M3.cgs())).item()
+        pmos_ro_1st     = self.M0.ro()
+        mirror_ro_1st   = self.utils.cascode(self.M1.ro(), self.M2.ro(), self.M2.gm())
+        self.rout_1st   = self.utils.parallel([pmos_ro_1st, mirror_ro_1st])
+        self.av_1st     = self.rout_1st * self.gm_1st
         
-        self.av_val = self.rout_val * self.M0.gm()
+        pmos_ro_2nd     = self.M3.ro()
+        nmos_ro_2nd     = self.M4.ro()
+        self.rout_2nd   = self.utils.parallel([pmos_ro_2nd, nmos_ro_2nd])
+        self.av_2nd     = self.rout_2nd * self.gm_2nd
+        
+        self.fp1 = (1 / (2 * np.pi * self.Cc * (1 + self.av_2nd) * self.rout_1st))
+        self.fp2 = (1 / (2 * np.pi * self.rout_2nd * self.CL))
+        self.fp3 = (self.M1.gm() / (2 * np.pi * 2 * self.M1.cgs()))
         
     def av(self) -> float:
-        return self.rout_val * self.GM_val
+        return self.av_1st * self.av_2nd
     
     def rout(self) -> float:
-        return self.rout_val
+        return self.rout_2nd
     
     def poles(self) -> list[float]:
-        return [self.fp1, self.fp2, self.fp3, self.fp4]
-    
-    def GM(self) -> float:
-        return self.GM_val
+        return [self.fp1, self.fp2, self.fp3]
     
     def size(self) -> dict[str, str]:
         W0 = str("{:.2e}".format(float(self.M0.w_val)))
@@ -92,12 +117,12 @@ class OTA:
         p1 = poles[0]
         p2 = poles[1]
         p3 = poles[2]
-        p4 = poles[3]
-        den4 = [1, p1+p2+p3+p4, p1*p2+p1*p3+p1*p4+p2*p3+p2*p4+p3*p4, p1*p2*p3+p1*p2*p4+p1*p3*p4+p2*p3*p4, p1*p2*p3*p4]
-        K = den4[-1] * self.av()
+        den3 = [1, p1+p2+p3, p1*p2+p3*p1+p2*p3, p1*p2*p3]
+        K = den3[-1] * self.av()
         
-        sys = sp.signal.TransferFunction([K], den4)
-        w, mag, phase = sp.signal.bode(sys)
+        w = np.logspace(1, 9, 1000)
+        sys = sp.signal.TransferFunction([K], den3)
+        w, mag, phase = sp.signal.bode(sys, w)
 
         fig, ax = plt.subplots()
         fig.set_size_inches(12, 8)
