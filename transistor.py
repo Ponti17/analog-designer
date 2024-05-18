@@ -19,7 +19,7 @@ class MosDevice():
         self.__gmoverid_arr: npt.NDArray[np.float64]
         self.__gmro_arr: npt.NDArray[np.float64]
         self.__ft_arr: npt.NDArray[np.float64]
-        self.__idww_arr: npt.NDArray[np.float64]
+        self.__idw_arr: npt.NDArray[np.float64]
         
     def set_gmoverid(self, gmid: float) -> None:
         self.gmoverid = gmid
@@ -81,6 +81,9 @@ class MosDevice():
     
     def cgg(self) -> float:
         return self.gm() / self.ft() * (1 / (2 * np.pi))
+    
+    def cgs(self) -> float:
+        return self.cgg() * (1/2.5)
     
     def width(self) -> float:
         return self.w_val
