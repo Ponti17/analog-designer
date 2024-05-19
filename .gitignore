@@ -1,10 +1,9 @@
 # ---
+.markdownlint.json
 
 # DON'T commit data related models from PDK
 *.pkl
 *.csv
-
-# Template
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
