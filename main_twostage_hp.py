@@ -23,7 +23,7 @@ if __name__ == "__main__":
     ts.M4.model = "pch_25"
     
     ts.M0.gateL = 2e-6
-    ts.M1.gateL = 10e-6
+    ts.M1.gateL = 20e-6
     ts.M2.gateL = 1e-6
     
     ts.M3.gateL = 1e-6
@@ -44,15 +44,5 @@ if __name__ == "__main__":
     ts.M4.gmoverid = 16
     
     ts.init()
-    
-    av = ts.av()
-    av_db = 20 * np.log10(av)
-    print(av_db)
-    
-    poles = ts.poles()
-    print(poles)
-    
-    sizes = ts.size()
-    print(sizes)
-    
+    ts.characterize(latex = True)
     ts.bode()
