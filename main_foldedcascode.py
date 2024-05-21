@@ -34,11 +34,4 @@ if __name__ == "__main__":
     fd.M5.gmoverid = 17
     
     fd.init()
-    # fd.GM_val = 140e-6
-
-    av = fd.av()
-    av_db = 20 * np.log10(av)
-    print(av_db)
-    
-    poles = fd.poles()
-    print(poles)
+    fd.characterize(latex = False)
