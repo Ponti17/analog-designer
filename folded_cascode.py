@@ -86,6 +86,7 @@ class FoldedCascode:
             self.fp1 = (1 / (2 * np.pi * self.Cc * (1 + self.av_2nd) * self.rout_1st))
             self.fp2 = (self.M6.gm() / (2 * np.pi * self.CL))
             self.fp3 = (self.M2.gm() / (2 * np.pi * self.M2.cgs()))
+            self.fp4 = (self.M3.gm() / (2 * np.pi * 3 * self.M1.cgs()))
         else:
             self.fp1 = 1 / (2 * np.pi * self.rout_1st * self.CL)
             self.fp2 = self.M2.gm() / (2 * np.pi * self.M2.cgs())
@@ -104,7 +105,7 @@ class FoldedCascode:
     
     def poles(self) -> list[float]:
         if self.twostage:
-            return [self.fp1, self.fp2, self.fp3]
+            return [self.fp1, self.fp2, self.fp3, self.fp4]
         else:
             return [self.fp1, self.fp2]
     
@@ -138,7 +139,7 @@ class FoldedCascode:
             table = [["1st Stage Gain"  , av1   , "Dominant Pole"   , poles[0]  , "M0", sizes["W0"], self.M0.gateL],
                     ["2nd Stage Gain"   , av2   , "Output Pole"     , poles[1]  , "M1", sizes["W1"], self.M1.gateL],
                     ["Total Gain"       , av    , "Mirror Pole"     , poles[2]  , "M2", sizes["W2"], self.M2.gateL],
-                    [None              , None   , None              , None      , "M3", sizes["W3"], self.M3.gateL],
+                    [None              , None   , "Cascode Pole"    , poles[3]  , "M3", sizes["W3"], self.M3.gateL],
                     [None              , None   , None              , None      , "M4", sizes["W4"], self.M4.gateL],
                     [None              , None   , None              , None      , "M5", sizes["W5"], self.M5.gateL],
                     [None              , None   , None              , None      , "M6", sizes["W6"], self.M5.gateL],
