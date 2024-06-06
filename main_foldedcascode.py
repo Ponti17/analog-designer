@@ -11,14 +11,14 @@ if __name__ == "__main__":
     # M6: 2nd stage NMOS
     # M7: 2nd stage PMOS
     fd = FoldedCascode()
-    fd.itail = 470e-9
-    fd.iout  = 3.7e-6
-    fd.CL = 1e-12
-    fd.Cc = 1e-12
+    fd.itail = 3.14e-6
+    fd.iout  = 9.24e-6
+    fd.CL = 0.5e-12
+    fd.Cc = 0.5e-12
     fd.twostage = True
     fd.M0.model = "nch_25"
     fd.M1.model = "pch_25"
-    fd.M2.model = "nch"
+    fd.M2.model = "nch_25"
     fd.M3.model = "nch"
     fd.M4.model = "pch"
     fd.M5.model = "pch"
@@ -49,8 +49,8 @@ if __name__ == "__main__":
     fd.M6.vdsrc = 0.6
     fd.M7.vdsrc = 0.6
     # ---
-    fd.M0.gmoverid = 27
-    fd.M1.gmoverid = 27
+    fd.M0.gmoverid = 20
+    fd.M1.gmoverid = 20
     
     fd.M2.gmoverid = 17
     fd.M3.gmoverid = 17
@@ -62,8 +62,7 @@ if __name__ == "__main__":
     fd.M7.gmoverid = 20
     
     fd.init()
-    print(fd.M3.gm())
-    print(fd.M3.cgs())
-    print(fd.M1.cgs())
+    print(fd.rout_2nd)
+    print(fd.rout_1st)
     fd.characterize(latex = False)
     # fd.bode()
