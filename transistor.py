@@ -51,21 +51,24 @@ class MosDevice():
             return True
         return False
     
+    def __find_nearest(self, array: npt.NDArray[np.float64], value: float) -> int:
+        array   = np.asarray(array)
+        idx     = int((np.abs(array - value)).argmin())
+        return idx
+    
     def __calculate(self) -> None:
         self.__reader.load(self.model)
         self.__gmoverid_arr = self.__reader.get_axis("gmoverid", str(self.vdsrc), str(self.gateL))
         self.__gmro_arr = self.__reader.get_axis("gmro", str(self.vdsrc), str(self.gateL))
         self.__ft_arr = self.__reader.get_axis("ft", str(self.vdsrc), str(self.gateL))
         self.__idw_arr = self.__reader.get_axis("id/w", str(self.vdsrc), str(self.gateL))
-
-        for i in range(len(self.__gmoverid_arr)):
-            if self.__gmoverid_arr[i] < self.gmoverid:
-                self.gmoverid_val = self.__gmoverid_arr[i].item()
-                self.gmro_val = self.__gmro_arr[i].item()
-                self.ft_val = self.__ft_arr[i].item()
-                self.idw_val = self.__idw_arr[i].item()
-                self.w_val = self.id / self.idw_val
-                break
+        
+        idx = self.__find_nearest(self.__gmoverid_arr, self.gmoverid)
+        self.gmoverid_val = self.__gmoverid_arr[idx].item()
+        self.gmro_val = self.__gmro_arr[idx].item()
+        self.ft_val = self.__ft_arr[idx].item()
+        self.idw_val = self.__idw_arr[idx].item()
+        self.w_val = self.id / self.idw_val
     
     def gmro(self) -> float:
         return self.gmro_val
@@ -83,7 +86,7 @@ class MosDevice():
         return self.gm() / self.ft() * (1 / (2 * np.pi))
     
     def cgs(self) -> float:
-        return self.cgg() * (1/2.5)
+        return self.cgg() * 0.5
     
     def width(self) -> float:
         return self.w_val
