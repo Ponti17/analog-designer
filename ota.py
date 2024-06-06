@@ -1,6 +1,7 @@
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
+from tabulate import tabulate
 from utils import Utils
 from transistor import MosDevice
 
@@ -60,11 +61,34 @@ class OTA:
         self.rout_val = self.utils.parallel([nmos_ro, pmos_ro])
         
         self.fp1 = (1 / (2 * np.pi * self.rout_val * self.CL))
-        self.fp2 = (self.M1.gm() / (4 * np.pi * self.M1.cgs()))
-        self.fp3 = (self.M1.gm() / (4 * np.pi * self.M1.cgs()))
-        self.fp4 = (self.M3.gm() / (4 * np.pi * self.M3.cgs()))
+        self.fp2 = (self.M1.gm() / (8 * np.pi * self.M1.cgs()))
+        self.fp3 = (self.M1.gm() / (8 * np.pi * self.M1.cgs()))
+        self.fp4 = (self.M3.gm() / (8 * np.pi * self.M3.cgs()))
         
         self.av_val = self.rout_val * self.M0.gm()
+        
+    def characterize(self, latex: bool) -> None:
+        av  = np.round(20*np.log10(self.av()), 2)
+        poles = self.poles()
+        sizes = self.size()
+        power = (self.itail*2) * 1.2 # Assuming 1.2 VDD
+        
+        poles_formatted = []
+        for pole in poles:
+            poles_formatted.append(str("{:.2e}".format(pole)))
+            
+        table = [["Total Gain",     av,  "Dominant Pole",       poles[0], "M0", sizes["W0"], self.M0.gateL],
+                 [None,             None,"Mirror Pole NMOS 1",  poles[1], "M1", sizes["W1"], self.M1.gateL],
+                 [None,             None,"Mirror Pole NMOS 2",  poles[2], "M2", sizes["W2"], self.M2.gateL],
+                 [None,             None,"Mirror Pole PMOS 1",  poles[3], "M3", sizes["W3"], self.M3.gateL],
+                 [None, None, None, None,                                 "M4", sizes["W4"], self.M4.gateL]]
+        
+        if latex:
+            format = "latex"
+        else:
+            format = "fancy_outline"
+        print(tabulate(table, headers=["Gain", "dB", "Pole", "Hz", "Device", "Width", "Length"], tablefmt=format, floatfmt=".2e"))
+        print("Power Consumption: {:.2e} W".format(power))
         
     def av(self) -> float:
         return self.rout_val * self.GM_val
@@ -79,11 +103,11 @@ class OTA:
         return self.GM_val
     
     def size(self) -> dict[str, str]:
-        W0 = str("{:.2e}".format(float(self.M0.w_val)))
-        W1 = str("{:.2e}".format(float(self.M1.w_val)))
-        W2 = str("{:.2e}".format(float(self.M2.w_val)))
-        W3 = str("{:.2e}".format(float(self.M3.w_val)))
-        W4 = str("{:.2e}".format(float(self.M4.w_val)))
+        W0 = str("{:.2e}".format(np.abs(float(self.M0.w_val))))
+        W1 = str("{:.2e}".format(np.abs(float(self.M1.w_val))))
+        W2 = str("{:.2e}".format(np.abs(float(self.M2.w_val))))
+        W3 = str("{:.2e}".format(np.abs(float(self.M3.w_val))))
+        W4 = str("{:.2e}".format(np.abs(float(self.M4.w_val))))
         return {"W0": W0, "W1": W1, "W2": W2, "W3": W3, "W4": W4}
     
     def bode(self) -> None:
