@@ -23,6 +23,8 @@ class TwoStage:
         self.M3 = MosDevice()
         # PMOS 2nd stage load
         self.M4 = MosDevice()
+        # Input Cascode
+        self.M5 = MosDevice()
         # Miller capacitor
         self.Cc:float           = 0.0
         # Output stage currnet
@@ -51,6 +53,7 @@ class TwoStage:
         self.fp3: float     = 0.0
         
         self.cascode_mirror: bool = False
+        self.cascode_input: bool  = False
         
     def init(self) -> None:
         self.M0.set_id(self.itail/2)
@@ -58,6 +61,7 @@ class TwoStage:
         self.M2.set_id(self.itail/2)
         self.M3.set_id(self.iout)
         self.M4.set_id(self.iout)
+        self.M5.set_id(self.itail/2)
         
         self.__calculate()
             
@@ -65,7 +69,10 @@ class TwoStage:
         self.gm_1st = self.M0.gm()
         self.gm_2nd = self.M3.gm()
         
-        pmos_ro_1st     = self.M0.ro()
+        if self.cascode_input:
+            pmos_ro_1st     = self.utils.cascode(self.M1.ro(), self.M5.ro(), self.M5.gm())
+        else:
+            pmos_ro_1st     = self.M0.ro()
         if self.cascode_mirror:
             mirror_ro_1st   = self.utils.cascode(self.M1.ro(), self.M2.ro(), self.M2.gm())
         else:
@@ -77,7 +84,7 @@ class TwoStage:
         self.av_2nd     = self.rout_2nd * self.gm_2nd
         
         self.fp1 = (1 / (2 * np.pi * self.Cc * (1 + self.av_2nd) * self.rout_1st))
-        self.fp2 = (self.M3.gm() / (2 * np.pi * self.CL))
+        self.fp2 = (self.M3.gm() / (2 * np.pi * (self.CL + self.M3.cgg())))
         self.fp3 = (self.M1.gm() / (2 * np.pi * 0.5 * self.M1.cgs()))
         
     def av(self) -> float:
@@ -130,17 +137,18 @@ class TwoStage:
         den3 = [1, p1+p2+p3, p1*p2+p3*p1+p2*p3, p1*p2*p3]
         K = den3[-1] * self.av()
         
-        w = np.logspace(1, 9, 1000)
+        w = np.logspace(0, 8, 1000)
         sys = sp.signal.TransferFunction([K], den3)
         w, mag, phase = sp.signal.bode(sys, w)
 
         fig, ax = plt.subplots()
         fig.set_size_inches(12, 8)
 
+        ax.set_xlim(1, 1e8)
         ax.set_xlabel('Frequency [Hz]')
         ax.set_ylabel('Magnitude [dB]')
         ax.semilogx(w, mag)
-
+        
         ax2 = ax.twinx()
         ax2.semilogx(w, phase, color="red")
         ax2.set_ylabel('Phase [deg]')
